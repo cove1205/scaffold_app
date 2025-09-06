@@ -1,0 +1,23 @@
+name: core_network
+description: "基础组件--网络"
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: '>=3.9.0<4.0.0'
+  flutter: ">=3.35.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  #网络请求
+  dio: ^5.8.0+1
+
+  # 函数式编程
+  # fpdart: ^1.1.1
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+
+flutter:
