@@ -2,11 +2,9 @@ import 'package:core_utils/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_widget/refreshable.dart' show RefreshableList;
 
 abstract class AppConfigs {
-  static const String title = 'XXXXXXXX';
 
   /// 设计稿尺寸
   static const Size designSize = Size(375, 812);
@@ -123,17 +121,5 @@ abstract class AppConfigs {
     },
   );
 
-  Widget Function(dynamic)? overlayWidgetBuilder = (_) {
-    return Container(
-      color: Colors.black12,
-      width: double.infinity,
-      child: Center(
-        child: LoadingAnimationWidget.twistingDots(
-          leftDotColor: const Color(0xFF1A1A3F),
-          rightDotColor: const Color(0xFFEA3799),
-          size: 40,
-        ),
-      ),
-    );
-  };
+  
 }

@@ -27,18 +27,14 @@ dependencies:
   # 瀑布流布局
   waterfall_flow: ^3.1.1
 
-  # loading组件
-  # loader_overlay: ^5.0.0
-  # flutter_easyloading: ^3.0.5
-
   ##########################
 
   #跑马灯
   # marquee: ^2.3.0
 
   # 二维码扫描
-  # mobile_scanner: ^4.0.1
   # native_barcode_scanner: ^1.0.11
+  ultra_qr_scanner: ^3.0.2
 
 dev_dependencies:
   flutter_lints: ^6.0.0

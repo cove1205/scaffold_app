@@ -14,6 +14,7 @@ import 'package:core_utils/connectivity_util.dart';
 import 'package:core_utils/info_util.dart';
 import 'package:core_utils/log_util.dart';
 import 'package:core_utils/storage_util.dart';
+import 'package:scaffold_app/app/configs/app_constant.dart';
 import 'package:shared_widget/scaffold_app.dart';
 
 import 'configs/interceptors.dart';
@@ -28,7 +29,7 @@ class App extends ScaffoldApp {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
-        title: AppConfigs.title,
+        title: AppConstant.appName,
         debugShowCheckedModeBanner: false,
         initialRoute: AppRoutes.initialRoute,
         unknownRoute: unknownRoute,

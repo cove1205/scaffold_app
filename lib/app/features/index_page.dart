@@ -1,6 +1,7 @@
 import 'package:core_utils/log_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_widget/qr_scan_widget.dart';
 
 import 'info_page.dart';
 import 'permission_page.dart';
@@ -11,6 +12,7 @@ List<Map<String, dynamic>> indexPagesList = [
   {'name': '应用和设备信息', 'route': '/info', 'page': InfoPage()},
   {'name': '请求', 'route': '/request', 'page': RequestPage()},
   {'name': '权限', 'route': '/permission', 'page': PermissionPage()},
+  {'name': '二维码扫描', 'route': '/qr_scan', 'page': QRScanWidget()},
 ];
 
 class IndexPage extends StatelessWidget {

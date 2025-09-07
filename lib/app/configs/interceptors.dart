@@ -190,7 +190,7 @@ class TokenRefreshInterceptor extends Interceptor {
     }
   }
 
-  /// 带重试机制的刷新token方法
+  /// 刷新token方法
   Future<Map<String, dynamic>> _refreshTokenWithRetry(
     String refreshToken,
   ) async {
