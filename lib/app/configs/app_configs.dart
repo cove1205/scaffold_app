@@ -1,8 +1,9 @@
+import 'package:core_utils/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_widget/refreshable.dart' show RefreshableList;
-import 'package:shared_widget/ui_export.dart';
 
 abstract class AppConfigs {
   static const String title = 'XXXXXXXX';
@@ -107,20 +108,22 @@ abstract class AppConfigs {
   /// 设置语言为中文
   static const List<Locale> supportedLocales = [Locale('zh', 'CN')];
 
-  static Widget Function(BuildContext, Widget?)? initBuilder =
-      (context, child) {
-        // 全局设置
-        RefreshableList.initialRefresh();
-        // 限制应用字体跟随系统缩放
-        return MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.linear(1.0)),
-          child: child!,
-        );
-      };
+  static Widget Function(BuildContext, Widget?)? initBuilder = LoadingUtil.init(
+    builder: (context, child) {
+      // 全局设置
+      RefreshableList.initialRefresh();
 
-  static Widget Function(dynamic)? overlayWidgetBuilder = (_) {
+      // 限制应用字体跟随系统缩放
+      return MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(1.0)),
+        child: child!,
+      );
+    },
+  );
+
+  Widget Function(dynamic)? overlayWidgetBuilder = (_) {
     return Container(
       color: Colors.black12,
       width: double.infinity,

@@ -1,13 +1,13 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
-// import 'package:fpdart/fpdart.dart';
+import 'interceptors/extensions.dart';
 
 export 'package:dio/dio.dart';
 
 part 'request.dart';
 part 'response.dart';
 part 'exception.dart';
-
-// typedef NetworkRes = Either<NetworkException, NetworkResponse>;
 
 typedef Decoder<T> = T Function(Map<String, dynamic>);
 
@@ -16,12 +16,15 @@ final networkClient = NetworkClient();
 class NetworkClient {
   NetworkClient._() : _dio = Dio();
 
+  static Dio get dio => _instance._dio;
+
   factory NetworkClient() => _instance;
 
   static final NetworkClient _instance = NetworkClient._();
 
   final Dio _dio;
 
+  /// 初始化
   /// 设置全局请求参数
   static void init({
     String baseUrl = '',
@@ -34,14 +37,15 @@ class NetworkClient {
     List<Interceptor> interceptors = const [],
   }) {
     final dio = _instance._dio;
-    dio.options
-      ..baseUrl = baseUrl
-      ..connectTimeout = connectTimeout ?? dio.options.connectTimeout
-      ..receiveTimeout = receiveTimeout ?? dio.options.receiveTimeout
-      ..sendTimeout = sendTimeout ?? dio.options.sendTimeout
-      ..queryParameters = queryParameters ?? dio.options.queryParameters
-      ..extra = extra ?? dio.options.extra
-      ..headers = headers ?? dio.options.headers;
+    dio.options = dio.options.copyWith(
+      baseUrl: baseUrl,
+      connectTimeout: connectTimeout,
+      receiveTimeout: receiveTimeout,
+      sendTimeout: sendTimeout,
+      queryParameters: queryParameters,
+      extra: extra,
+      headers: headers,
+    );
 
     dio.interceptors.addAll(interceptors);
   }
@@ -68,10 +72,13 @@ class NetworkClient {
 
   /// 基础请求
   /// [req] 请求体构建对象
-  /// [decoder] 反序列化方法
-  /// [listDecoder] 列表反序列化方法
+  /// [showLoading] 是否显示加载动画
+  /// [decoder] 反序列化方法回调
+  /// [listDecoder] 列表反序列化方法回调
   Future<NetworkResponse> fetch<T>(
     NetworkRequest req, {
+    bool showLoading = true,
+    bool retry = false,
     T Function(Map<String, dynamic>)? decoder,
     T Function(Map<String, dynamic>)? listDecoder,
   }) async {
@@ -81,7 +88,9 @@ class NetworkClient {
         data: req.data,
         queryParameters: req.queryParams,
         cancelToken: req.cancelToken,
-        options: req.optiopns,
+        options: req.optiopns
+          ..showLoading = showLoading
+          ..disableRetry = !retry,
         onSendProgress: req.onSendProgress,
         onReceiveProgress: req.onReceiveProgress,
       );
@@ -174,13 +183,12 @@ class NetworkClient {
   }
 
   /// 重试请求
-  Future<Response<T>> retry<T>(
-    RequestOptions requestOptions, {
-    bool silence = false,
-  }) async {
+  Future<Response<T>> retry<T>(RequestOptions requestOptions) async {
     Response<T> response = await _dio.request(
       requestOptions.path,
-      data: _buildDataForRetry(requestOptions),
+      data: requestOptions.data is FormData
+          ? (requestOptions.data as FormData).clone()
+          : requestOptions.data,
       queryParameters: Map<String, dynamic>.from(
         requestOptions.queryParameters,
       ),
@@ -195,51 +203,5 @@ class NetworkClient {
     );
 
     return response;
-  }
-
-  // 根据 extra 重建上传 FormData，或回退到直接克隆
-  dynamic _buildDataForRetry(RequestOptions source) {
-    final data = source.data;
-    final extra = source.extra;
-    if (data is FormData) {
-      final isMultipart = extra['multipart_upload'] == true;
-      if (isMultipart) {
-        final dynamic paths = extra['filePaths'];
-        final String fieldName = (extra['fileFieldName'] ?? 'file').toString();
-        final Map<String, dynamic> fields = Map<String, dynamic>.from(
-          extra['fields'] ?? {},
-        );
-        if (paths is List && paths.isNotEmpty) {
-          final form = FormData();
-          // 先写入字段
-          fields.forEach(
-            (key, value) => form.fields.add(MapEntry(key, value.toString())),
-          );
-          // 补齐原始FormData中未包含在extra.fields的字段
-          for (final entry in data.fields) {
-            if (!fields.containsKey(entry.key)) {
-              form.fields.add(entry);
-            }
-          }
-          // 写入文件（多文件按相同字段名重复添加）
-          for (final p in paths) {
-            if (p is String && p.isNotEmpty) {
-              form.files.add(
-                MapEntry(fieldName, MultipartFile.fromFileSync(p)),
-              );
-            }
-          }
-          return form;
-        }
-      }
-      // 回退：克隆 FormData 的 fields 与 files（注意可能仍旧复用 MultipartFile，但在普通情况已足够）
-      final newFormData = FormData();
-      newFormData.fields.addAll(data.fields);
-      for (final entry in data.files) {
-        newFormData.files.add(MapEntry(entry.key, entry.value));
-      }
-      return newFormData;
-    }
-    return data;
   }
 }

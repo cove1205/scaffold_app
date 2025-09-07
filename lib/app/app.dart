@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:core_network/interceptors/loading_interceptor.dart';
+import 'package:core_network/interceptors/retry_interceptor.dart';
 import 'package:core_utils/lifecycle_util.dart';
+import 'package:core_utils/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:core_network/core_network.dart';
@@ -11,8 +15,6 @@ import 'package:core_utils/info_util.dart';
 import 'package:core_utils/log_util.dart';
 import 'package:core_utils/storage_util.dart';
 import 'package:shared_widget/scaffold_app.dart';
-import 'package:shared_widget/ui_export.dart'
-    show GlobalLoaderOverlay, ScreenUtilInit;
 
 import 'configs/interceptors.dart';
 import 'configs/app_configs.dart';
@@ -25,20 +27,17 @@ class App extends ScaffoldApp {
       designSize: AppConfigs.designSize,
       minTextAdapt: true,
       splitScreenMode: true,
-      child: GlobalLoaderOverlay(
-        overlayWidgetBuilder: AppConfigs.overlayWidgetBuilder,
-        child: GetMaterialApp(
-          title: AppConfigs.title,
-          debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.initialRoute,
-          unknownRoute: unknownRoute,
-          getPages: appPages,
-          theme: AppConfigs.themeData,
-          localizationsDelegates: AppConfigs.localizationsDelegates,
-          supportedLocales: AppConfigs.supportedLocales,
-          navigatorObservers: [LogUtil.navigatorObserver],
-          builder: AppConfigs.initBuilder,
-        ),
+      child: GetMaterialApp(
+        title: AppConfigs.title,
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppRoutes.initialRoute,
+        unknownRoute: unknownRoute,
+        getPages: appPages,
+        theme: AppConfigs.themeData,
+        localizationsDelegates: AppConfigs.localizationsDelegates,
+        supportedLocales: AppConfigs.supportedLocales,
+        navigatorObservers: [LogUtil.navigatorObserver],
+        builder: AppConfigs.initBuilder,
       ),
     );
   }
@@ -62,10 +61,17 @@ class App extends ScaffoldApp {
           'Accept': 'application/json',
         },
         interceptors: [
-          // TokenRefreshInterceptor(),
-          LoadingInterceptor(),
-          LogUtil.talkerDioLogger,
+          LoadingInterceptor(
+            onShowLoading: () {
+              LoadingUtil.show();
+            },
+            onHideLoading: () {
+              LoadingUtil.dismiss();
+            },
+          ),
+          RetryInterceptor(dio: NetworkClient.dio, logPrint: LogUtil.warning),
           ResInterceptor(),
+          LogUtil.talkerDioLogger,
         ],
       );
 
@@ -75,8 +81,10 @@ class App extends ScaffoldApp {
         );
       });
 
-      ConnectivityStatus status = await ConnectivityUtil.checkConnectivity();
-      LogUtil.info('当前网络状态: ${status.nameZh}');
+      ConnectivityUtil.listenConnectivityChanged((status) {
+        LogUtil.info('>>>>>>>>>>>>当前网络状态发生变化: ${status.nameZh}<<<<<<<<<<<<');
+      });
+
       LogUtil.info('>>>Init Services Finished<<<');
     } on Error catch (e) {
       LogUtil.error('>>>Init Services Error: ${e.toString()}<<<');

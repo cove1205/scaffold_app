@@ -1,29 +1,6 @@
 import 'package:core_network/core_network.dart';
 import 'package:core_utils/log_util.dart';
 import 'package:core_utils/storage_util.dart';
-import 'package:get/get.dart' hide Response;
-import 'package:shared_widget/loading_util.dart';
-
-/// loading拦截器
-class LoadingInterceptor extends Interceptor {
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    LoadingUtil.show(Get.context!);
-    handler.next(options);
-  }
-
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    LoadingUtil.hide(Get.context!);
-    handler.next(response);
-  }
-
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    LoadingUtil.hide(Get.context!);
-    handler.next(err);
-  }
-}
 
 /// 请求结果拦截器
 class ResInterceptor extends Interceptor {
@@ -217,73 +194,7 @@ class TokenRefreshInterceptor extends Interceptor {
   Future<Map<String, dynamic>> _refreshTokenWithRetry(
     String refreshToken,
   ) async {
-    const int maxRetries = 3; // 最多重试3次
-    const Duration retryDelay = Duration(milliseconds: 200);
-
-    for (int attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        LogUtil.info('尝试刷新token，第${attempt + 1}次');
-
-        networkClient.addHeaders({
-          'refreshToken': StorageUtil.getValue('refreshToken'),
-        });
-        final tokenData = <String, dynamic>{};
-        LogUtil.info('刷新token响应: $tokenData');
-
-        // 如果成功获取到token数据，直接返回
-        if (tokenData.isNotEmpty && tokenData['accessToken'] != null) {
-          LogUtil.info('成功获取新token');
-          return tokenData;
-        }
-
-        // 如果返回空数据但没有抛出异常，不需要重试，直接返回空
-        LogUtil.warning('刷新token返回空数据');
-        return tokenData;
-      } catch (e) {
-        // 判断是否为网络相关错误且还有重试机会
-        if (attempt < maxRetries && _isNetworkError(e)) {
-          LogUtil.warning('刷新token失败，第${attempt + 1}次重试中... 错误：$e');
-          await Future.delayed(retryDelay);
-          continue;
-        }
-
-        // 重试次数用完或不是网络错误，重新抛出异常
-        rethrow;
-      } finally {
-        networkClient.removeHeader('refreshToken');
-      }
-    }
-
     return {};
-  }
-
-  /// 判断是否为网络相关错误
-  bool _isNetworkError(dynamic error) {
-    if (error is DioException) {
-      switch (error.type) {
-        case DioExceptionType.connectionTimeout:
-        case DioExceptionType.connectionError:
-        case DioExceptionType.receiveTimeout:
-        case DioExceptionType.sendTimeout:
-          return true;
-        case DioExceptionType.unknown:
-          // 检查是否为网络连接相关的异常
-          final message = error.message?.toLowerCase() ?? '';
-          return message.contains('network') ||
-              message.contains('connection') ||
-              message.contains('timeout') ||
-              message.contains('failed host lookup');
-        default:
-          return false;
-      }
-    }
-
-    // 其他类型的网络异常
-    final errorString = error.toString().toLowerCase();
-    return errorString.contains('socketexception') ||
-        errorString.contains('network') ||
-        errorString.contains('connection') ||
-        errorString.contains('timeout');
   }
 
   /// 处理需要重新登录的情况

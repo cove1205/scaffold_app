@@ -79,7 +79,7 @@ class NetworkRequest {
 
 /// 下载请求
 class DownloadRequest extends NetworkRequest {
-  DownloadRequest(
+  const DownloadRequest(
     super.apiPath, {
     required this.savePath,
     this.deleteOnError = true,
@@ -110,15 +110,48 @@ class DownloadRequest extends NetworkRequest {
 ///   await MultipartFile.fromFile('./text2.txt', filename: 'text2.txt'),
 /// ]});
 class UploadRequset extends NetworkRequest {
-  const UploadRequset(
+  UploadRequset(
     super.apiPath, {
-    super.data,
+    required List<String> filePaths,
+    Map<String, dynamic>? fields,
     super.headers,
-    super.extra,
     super.cancelToken,
     super.onSendProgress,
   }) : super(
          method: NetworkRequestMethod.post,
          contentType: Headers.multipartFormDataContentType,
+         extra: _uploadExtra(fields: fields, filePaths: filePaths),
+         data: uploadFormData(fields: fields, filePaths: filePaths),
        );
+
+  static Map<String, dynamic> _uploadExtra({
+    Map<String, dynamic>? fields,
+    required List<String> filePaths,
+  }) {
+    return {'fields': fields, 'filePaths': filePaths};
+  }
+
+  static FormData uploadFormData({
+    Map<String, dynamic>? fields,
+    required List<String> filePaths,
+  }) {
+    var formData = FormData();
+    formData.clone();
+    if (fields != null) {
+      formData.fields.addAll(
+        fields.map((key, value) => MapEntry(key, value.toString())).entries,
+      );
+    }
+    if (filePaths.length == 1) {
+      formData.files.add(
+        MapEntry('file', MultipartFile.fromFileSync(filePaths.first)),
+      );
+    } else if (filePaths.length > 1) {
+      formData.files.addAll(
+        filePaths.map((e) => MapEntry('files', MultipartFile.fromFileSync(e))),
+      );
+    }
+
+    return formData;
+  }
 }

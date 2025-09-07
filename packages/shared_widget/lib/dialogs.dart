@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'buttons.dart';
 
@@ -17,13 +16,13 @@ class ConfirmDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       contentPadding: EdgeInsets.zero,
-      insetPadding: EdgeInsets.symmetric(horizontal: 32.w),
+      insetPadding: EdgeInsets.symmetric(horizontal: 32),
       content: Container(
-        width: 300.w,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        width: 300,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -34,11 +33,11 @@ class ConfirmDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xFF1A1A1A),
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -51,7 +50,7 @@ class ConfirmDialog extends StatelessWidget {
                     textColor: Color(0xFF7C65F6),
                   ),
                 ),
-                SizedBox(width: 16.w),
+                SizedBox(width: 16),
                 Expanded(
                   child: CommonButton(
                     text: '确认',

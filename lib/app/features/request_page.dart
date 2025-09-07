@@ -1,7 +1,9 @@
 import 'package:core_network/core_network.dart';
+import 'package:core_utils/loading_util.dart';
 import 'package:core_utils/log_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:convert';
 
 class RequestBinding extends Bindings {
   @override
@@ -18,19 +20,16 @@ class RequestController extends GetxController {
   /// 请求
   Future<void> request() async {
     NetworkRequest req = NetworkRequest(
-      'https://jsonplaceholder.typicode.com/todos/12',
+      'https://jsonplaceholder.typicode.com1/todos/12',
     );
 
-    NetworkResponse res = await networkClient.fetch(req);
+    NetworkResponse res = await networkClient.fetch(req, retry: false);
 
     if (res.exception != null) {
-      LogUtil.error(
-        res.exception!.message,
-        stackTrace: res.exception!.stackTrace,
-      );
+      LoadingUtil.showError(res.exception!.message);
     } else {
       resMap.value = res.data;
-      LogUtil.info('请求结果: ${res.data.toString()}');
+      LogUtil.info('请求结果: ${res.data}');
     }
   }
 
@@ -50,10 +49,15 @@ class RequestPage extends GetView<RequestController> {
     return Scaffold(
       appBar: AppBar(title: Text('请求')),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('请求'),
+          Text('请求结果'),
           Obx(() {
-            return Text(controller.resMap.toString());
+            // 使用JsonEncoder格式化Map输出，使其更美观可读
+
+            return Text(
+              const JsonEncoder.withIndent('  ').convert(controller.resMap),
+            );
           }),
         ],
       ),

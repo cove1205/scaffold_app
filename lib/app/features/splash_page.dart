@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_widget/ui_export.dart' show LoadingAnimationWidget;
 
 class SplashBinding extends Bindings {
   @override
@@ -29,12 +28,7 @@ class SplashPage extends GetView<SplashController> {
     return Scaffold(
       body: Container(
         color: Colors.amber,
-        child: Center(
-          child: LoadingAnimationWidget.dotsTriangle(
-            color: Colors.red,
-            size: 200,
-          ),
-        ),
+        child: Center(child: Text('Loading...')),
       ),
     );
   }

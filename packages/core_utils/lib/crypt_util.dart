@@ -1,35 +1,11 @@
-import 'dart:convert' show utf8, base64Encode;
-import 'dart:math';
+import 'dart:convert' show utf8;
 
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 // ignore: depend_on_referenced_packages
 import 'package:pointycastle/asymmetric/api.dart';
 
-class CryptUtil {
-  // md5 hashing a random number
-  static String md5RandomString() {
-    final randomNumber = Random().nextDouble();
-    final randomBytes = utf8.encode(randomNumber.toString());
-    final randomString = md5.convert(randomBytes).toString();
-    return randomString;
-  }
-
-  // sha1 hashing a random number
-  static String sha1RandomString() {
-    final randomNumber = Random().nextDouble();
-    final randomBytes = utf8.encode(randomNumber.toString());
-    final randomString = sha1.convert(randomBytes).toString();
-    return randomString;
-  }
-
-  /// base64 a random number
-  static String encodeBase64(String data) {
-    var content = utf8.encode(data);
-    var digest = base64Encode(content);
-    return digest;
-  }
-
+abstract class CryptUtil {
   /// aes加密
   static String aesEncode({required String content, required String key}) {
     final secretKey = encrypt.Key.fromUtf8(key);
@@ -103,4 +79,28 @@ class CryptUtil {
 
     return begin + strList.join('\n') + end;
   }
+}
+
+extension CryptUtilExtension on String {
+  /// 转换成MD5
+  String toMD5() => md5.convert(utf8.encode(this)).toString();
+
+  /// 转换成SH1
+  String toSH1() => sha1.convert(utf8.encode(this)).toString();
+
+  /// aes加密
+  String aesEncode({required String key}) =>
+      CryptUtil.aesEncode(content: this, key: key);
+
+  /// aes解密
+  String aesDecode({required String key}) =>
+      CryptUtil.aesDecode(content: this, key: key);
+
+  /// rsa加密
+  String rsaEncrypt({required String publicKey}) =>
+      CryptUtil.rsaEncrypt(this, publicKey);
+
+  /// rsa解密
+  String rsaDecrypt({required String privateKey}) =>
+      CryptUtil.rsaDecrypt(this, privateKey);
 }

@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
-
 /// String扩展
 extension StringExtension on String {
   /// 转换成double类型
@@ -8,12 +5,6 @@ extension StringExtension on String {
 
   /// 转换成int类型
   int? toInt() => int.tryParse(this);
-
-  /// 转换成MD5
-  String toMD5() => md5.convert(utf8.encode(this)).toString();
-
-  /// 转换成HASH
-  String toSH1() => sha1.convert(utf8.encode(this)).toString();
 
   /// 单词首字母大写
   String get capitalize => '${this[0].toUpperCase()}${substring(1)}';

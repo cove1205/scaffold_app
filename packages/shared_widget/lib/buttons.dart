@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 通用按钮
 class CommonButton extends StatelessWidget {
@@ -28,9 +26,17 @@ class CommonButton extends StatelessWidget {
   /// 图标对齐方式
   final IconAlignment? iconAlignment;
 
+  /// 文本样式
   final TextStyle? textStyle;
 
+  /// 内边距
   final EdgeInsetsGeometry? padding;
+
+  /// 最大宽度
+  final double? maxWidth;
+
+  /// 圆角
+  final BorderRadius? borderRadius;
 
   const CommonButton({
     super.key,
@@ -44,6 +50,8 @@ class CommonButton extends StatelessWidget {
     this.iconColor,
     this.textStyle,
     this.padding,
+    this.maxWidth,
+    this.borderRadius,
   });
 
   @override
@@ -64,18 +72,21 @@ class CommonButton extends StatelessWidget {
       iconAlignment: iconAlignment ?? IconAlignment.start,
       style: ButtonStyle().copyWith(
         padding: WidgetStateProperty.all(
-          padding ?? EdgeInsets.symmetric(horizontal: 16.w),
+          padding ?? EdgeInsets.symmetric(horizontal: 16),
         ),
         iconColor: iconColor != null
             ? WidgetStateProperty.all(iconColor)
             : null,
-        // minimumSize: WidgetStateProperty.all(const Size(20, 48)),
-        maximumSize: WidgetStateProperty.all(const Size(double.infinity, 48)),
+        maximumSize: WidgetStateProperty.all(
+          Size(maxWidth ?? double.infinity, 48),
+        ),
         side: borderColor == null
             ? null
             : WidgetStatePropertyAll(BorderSide(color: borderColor!)),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
+          RoundedRectangleBorder(
+            borderRadius: borderRadius ?? BorderRadius.circular(24),
+          ),
         ),
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           return states.contains(WidgetState.pressed)
