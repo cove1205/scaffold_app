@@ -130,49 +130,53 @@ class RetryInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.requestOptions.disableRetry) {
-      return super.onError(err, handler);
-    }
-    bool isRequestCancelled() =>
-        err.requestOptions.cancelToken?.isCancelled ?? false;
+    // 原有的重试逻辑
+    return _handleRetry(err, handler);
+  }
 
-    final attempt = err.requestOptions.attempt + 1;
-    final shouldRetry = attempt <= retries && await _shouldRetry(err, attempt);
+  Future<dynamic> _handleRetry(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    var requestOptions = err.requestOptions;
+
+    /// 检查是否需要重试
+    final attempt = requestOptions.attempt + 1;
+
+    final shouldRetry =
+        !(requestOptions.cancelToken?.isCancelled ?? false) &&
+        !requestOptions.disableRetry &&
+        attempt <= retries &&
+        await _shouldRetry(err, attempt);
 
     if (!shouldRetry) {
-      return super.onError(err, handler);
+      logPrint?.call('请求不重试');
+      super.onError(err, handler);
     }
 
-    err.requestOptions.attempt = attempt;
-    err.requestOptions.attemptLeft = retries - attempt;
+    ///// 下面是重试逻辑 /////
     final delay = _getDelay(attempt);
+
     logPrint?.call(
-      '[${err.requestOptions.path}] 请求发生错误,\n'
-      '重试中 \n'
-      '(尝试次数: $attempt/$retries,\n '
-      '等待 ${delay.inMilliseconds} ms,\n '
-      'error: ${err.error ?? err})',
+      '[${requestOptions.path}] 请求发生错误!\n'
+      '(重试中,尝试次数: $attempt/$retries,等待 ${delay.inMilliseconds} ms)\n '
+      'error: ${err.error ?? err}',
     );
 
-    var requestOptions = err.requestOptions;
-    if (requestOptions.data is FormData) {
-      requestOptions = _recreateOptions(err.requestOptions);
-    }
-
+    requestOptions.attempt = attempt;
+    requestOptions.attemptLeft = retries - attempt;
     if (delay != Duration.zero) {
       await Future<void>.delayed(delay);
     }
-    if (isRequestCancelled()) {
-      logPrint?.call('Request was cancelled. Cancel retrying.');
-      return super.onError(err, handler);
-    }
+
+    requestOptions = _recreateOptions(requestOptions);
 
     try {
       await dio
           .fetch<void>(requestOptions)
           .then((value) => handler.resolve(value));
     } on DioException catch (e) {
-      super.onError(e, handler);
+      handler.reject(e);
     }
   }
 
@@ -184,14 +188,18 @@ class RetryInterceptor extends Interceptor {
   }
 
   RequestOptions _recreateOptions(RequestOptions options) {
-    if (options.data is! FormData) {
-      throw ArgumentError(
-        'requestOptions.data is not FormData',
-        'requestOptions',
-      );
+    late dynamic data;
+    if (options.data is FormData) {
+      data = (options.data as FormData).clone();
+    } else {
+      data = options.data;
     }
-    final formData = options.data as FormData;
-    final newFormData = formData.clone();
-    return options.copyWith(data: newFormData);
+
+    return options.copyWith(
+      data: data,
+      queryParameters: options.queryParameters,
+      headers: options.headers,
+      extra: options.extra,
+    );
   }
 }

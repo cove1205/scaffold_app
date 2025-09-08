@@ -1,4 +1,5 @@
 import 'package:core_network/core_network.dart';
+import 'package:core_network/interceptors/http_status_codes.dart';
 import 'package:core_utils/log_util.dart';
 import 'package:core_utils/storage_util.dart';
 
@@ -12,7 +13,7 @@ class ResInterceptor extends Interceptor {
       requestOptions: response.requestOptions,
       statusMessage: response.statusMessage,
       statusCode: response.statusCode,
-      data: response.data,
+      data: response.data['data'] ?? response.data,
     );
 
     if (res.statusCode == 200) {
@@ -90,7 +91,7 @@ class TokenRefreshInterceptor extends Interceptor {
     // 检查响应中的code是否为401（token失效）
     if (response.data != null &&
         response.data is Map &&
-        response.data["code"] == 401) {
+        response.data["code"] == status401Unauthorized) {
       void retryFunction() async {
         LogUtil.info('重新发送原请求: ${response.requestOptions.path}');
         try {

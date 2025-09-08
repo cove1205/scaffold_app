@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_widget/refreshable.dart' show RefreshableList;
 
 abstract class AppConfigs {
-
   /// 设计稿尺寸
   static const Size designSize = Size(375, 812);
 
@@ -30,6 +29,9 @@ abstract class AppConfigs {
     useMaterial3: false,
     primarySwatch: Colors.blue,
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF3E9BFE)),
+    brightness: Brightness.light,
+    primaryColor: Color(0xff8A63FD),
+    scaffoldBackgroundColor: Colors.white,
     inputDecorationTheme: const InputDecorationTheme(
       // suffixIconColor: Colors.grey,
       focusedBorder: UnderlineInputBorder(
@@ -47,19 +49,19 @@ abstract class AppConfigs {
     appBarTheme: const AppBarTheme().copyWith(
       centerTitle: true,
       elevation: 0,
-      backgroundColor: Colors.white,
-      foregroundColor: const Color(0xFF333333),
+      backgroundColor: Color(0xff12121E),
+      foregroundColor: Colors.white,
       titleTextStyle: const TextStyle(
         fontSize: 17,
         fontWeight: FontWeight.w600,
-        color: Color(0xFF333333),
+        color: Colors.white,
       ),
       toolbarTextStyle: const TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w400,
-        color: Color(0xFF333333),
+        color: Colors.white,
       ),
-      iconTheme: const IconThemeData(color: Color(0xFF333333)),
+      iconTheme: const IconThemeData(color: Colors.white),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: Colors.white,
@@ -90,7 +92,6 @@ abstract class AppConfigs {
       indicatorSize: TabBarIndicatorSize.tab,
       indicatorColor: Color(0xFF3E9BFE),
     ),
-    scaffoldBackgroundColor: const Color(0xFFF7F7F7),
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
   );
@@ -120,6 +121,4 @@ abstract class AppConfigs {
       );
     },
   );
-
-  
 }

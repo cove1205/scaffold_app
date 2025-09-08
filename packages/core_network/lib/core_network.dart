@@ -150,12 +150,18 @@ class NetworkClient {
   //       headers: headers);
   //   return fetch(req);
   // }
-  Future<NetworkResponse> upload(UploadRequset req) async {
-    return fetch(req);
+  Future<NetworkResponse> upload(
+    UploadRequset req, {
+    bool retry = false,
+  }) async {
+    return fetch(req, retry: retry);
   }
 
   /// 下载
-  Future<NetworkResponse> download(DownloadRequest req) async {
+  Future<NetworkResponse> download(
+    DownloadRequest req, {
+    bool retry = false,
+  }) async {
     try {
       Response response = await _dio.download(
         req.apiPath,
@@ -165,7 +171,9 @@ class NetworkClient {
         onReceiveProgress: req.onReceiveProgress,
         cancelToken: req.cancelToken,
         deleteOnError: req.deleteOnError,
-        options: req.optiopns,
+        options: req.optiopns
+          ..disableRetry = !retry
+          ..extra = req.optiopns.extra ?? {},
       );
       return NetworkResponse(
         response.statusCode!,
@@ -174,11 +182,19 @@ class NetworkClient {
         exception: null,
       );
     } on DioException catch (e) {
-      NetworkException ex = NetworkException.fromDioException(e);
-      return NetworkResponse(ex.statusCode!, ex.message, exception: ex);
+      NetworkException exception = NetworkException.fromDioException(e);
+      return NetworkResponse(
+        exception.statusCode,
+        exception.message,
+        exception: exception,
+      );
     } on Error catch (e) {
-      NetworkException ex = NetworkException.fromError(e);
-      return NetworkResponse(ex.statusCode!, ex.message, exception: ex);
+      NetworkException exception = NetworkException.fromError(e);
+      return NetworkResponse(
+        exception.statusCode,
+        exception.message,
+        exception: NetworkException.fromError(e),
+      );
     }
   }
 
