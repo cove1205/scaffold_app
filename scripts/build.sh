@@ -8,7 +8,6 @@
 source ./scripts/sh.config
 
 # 帮助信息
-# HELP_MESSAGE_PARAM_TYPE="parameter -t, release_type, options [$RELEASE,$TEST]"
 HELP_MESSAGE_PARAM_PLATFORM="parameter -p, platform, options [$ANDROID,$IOS]"
 HELP_MESSAGE_PARAM_VERSION="parameter -v, version, e.g: <x.y.z>"
 HELP_MESSAGE_PARAM_BUILD_NUMBER="parameter -b, build_number, e.g: 123456789"
@@ -21,8 +20,7 @@ Usage:
 build.sh [-p platform] [-t release_type] [-v version] [-b build_number] [-a android_target] [-e ios_export_method] [-h] [--verbose]
 
 comment:
-# $HELP_MESSAGE_PARAM_VERSION
-$HELP_MESSAGE_PARAM_TYPE
+$HELP_MESSAGE_PARAM_VERSION
 $HELP_MESSAGE_PARAM_PLATFORM
 $HELP_MESSAGE_PARAM_BUILD_NUMBER
 $HELP_MESSAGE_PARAM_ANDROID_TARGET
@@ -36,7 +34,6 @@ while getopts 'p:v:b:a:e:hlc' OPT; do
     p) platform="$OPTARG" ;;
     v) version="$OPTARG" ;;
     b) build_number="$OPTARG" ;;
-    # t) type="$OPTARG" ;;
     a) android_target="$OPTARG" ;;  # Android target-platform参数
     e) ios_export_method="$OPTARG" ;; # iOS export-method参数
     h) description ;;
@@ -159,30 +156,9 @@ check_build_option() {
     build_number_option="--build-number=${build_number}"
 }
 
-# 获取当前分支
-get_current_branch() {
-
-    echo ""
-    print_start "检查当前分支"
-
-    if [ "$(git rev-parse --abbrev-ref HEAD)" != "HEAD" ]; then
-        branch=$(git rev-parse --abbrev-ref HEAD)
-        if [ -z "$branch" ]; then
-            print_error "获取当前分支失败 (branch 为空)"
-            exit 1
-        else
-            current_branch=$branch
-            print_ok "当前分支:$branch"
-        fi
-    else
-        print_error "当前不在任何分支上"
-        exit 1
-    fi
-}
-
 # 信号处理
 interrupted=false
-
+# 清理函数
 cleanup() {
     interrupted=true
     echo -e "\n${Red}[ERROR]${Font} 用户中断操作"
@@ -270,31 +246,13 @@ print_build_info() {
 
 }
 
-# 计算字符串的实际长度
-function get_string_length() {
-    local length=0
-    local string="$1"
-    local len=${#string}
-    for ((i = 0; i < len; i++)); do
-        local char="${string:i:1}"
-        local code=$(printf "%d" "'$char")
-        if ((code >= 0 && code <= 127)); then
-            ((length++))
-        else
-            ((length += 2))
-        fi
-    done
-    echo "$length"
-}
-
+# 主函数
 main() {
     # set -x
-    # check_type
     check_platform
     check_build_option
     build
     print_build_info
 }
-
 
 main "$@"
