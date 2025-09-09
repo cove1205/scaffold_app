@@ -1,27 +1,35 @@
 #!/usr/bin/env bash
 
-#====================================================
+#========================================
 #	app构建脚本
 #	Author:	cove
-#====================================================
+#========================================
 
 source ./scripts/sh.config
 
+APK="apk"
+IPA="ipa"
+DEBUG="debug"
+RELEASE="release"
+PROFILE="profile"
+
 # 帮助信息
-HELP_MESSAGE_PARAM_PLATFORM="parameter -p, platform, options [$ANDROID,$IOS]"
-HELP_MESSAGE_PARAM_VERSION="parameter -v, version, e.g: <x.y.z>"
-HELP_MESSAGE_PARAM_BUILD_NUMBER="parameter -b, build_number, e.g: 123456789"
-HELP_MESSAGE_PARAM_ANDROID_TARGET="parameter -a, android_target, options [android-arm, android-arm64, android-x64] (仅当-p android时有效)"
-HELP_MESSAGE_PARAM_IOS_EXPORT="parameter -e, ios_export_method, options [app-store, ad-hoc, development] (仅当-p ios时有效)"
+HELP_MESSAGE_PARAM_PLATFORM="参数 -p, 构建平台, options [$ANDROID,$IOS]"
+HELP_MESSAGE_PARAM_BUILD_TYPE="参数 -t, 构建类型, options [$DEBUG,$RELEASE,$PROFILE]"
+HELP_MESSAGE_PARAM_VERSION="参数 -v, 版本号, e.g: <x.y.z>"
+HELP_MESSAGE_PARAM_BUILD_NUMBER="参数 -b, 构建版本, e.g: 123456789"
+HELP_MESSAGE_PARAM_ANDROID_TARGET="参数 -a, Android目标平台, options [android-arm, android-arm64, android-x64] (仅当-p android时有效)"
+HELP_MESSAGE_PARAM_IOS_EXPORT="参数 -e, iOS导出方法, options [app-store, ad-hoc, development] (仅当-p ios时有效)"
 
 description() {
     cat <<EOF
 Usage:
-build.sh [-p platform] [-t release_type] [-v version] [-b build_number] [-a android_target] [-e ios_export_method] [-h] [--verbose]
+build.sh [-p platform] [-t build_type] [-v version] [-b build_number] [-a android_target] [-e ios_export_method] [-h] [--verbose]
 
 comment:
-$HELP_MESSAGE_PARAM_VERSION
 $HELP_MESSAGE_PARAM_PLATFORM
+$HELP_MESSAGE_PARAM_BUILD_TYPE
+$HELP_MESSAGE_PARAM_VERSION
 $HELP_MESSAGE_PARAM_BUILD_NUMBER
 $HELP_MESSAGE_PARAM_ANDROID_TARGET
 $HELP_MESSAGE_PARAM_IOS_EXPORT
@@ -29,9 +37,10 @@ EOF
     exit -1
 }
 
-while getopts 'p:v:b:a:e:hlc' OPT; do
+while getopts 'p:t:v:b:a:e:hlc' OPT; do
     case $OPT in
     p) platform="$OPTARG" ;;
+    t) build_type="$OPTARG" ;;
     v) version="$OPTARG" ;;
     b) build_number="$OPTARG" ;;
     a) android_target="$OPTARG" ;;  # Android target-platform参数
@@ -47,13 +56,19 @@ check_type() {
     echo ""
     print_start "校验构建环境"
 
-    case "$type" in
-    "$RELEASE" | "${TEST}")
-        print_ok "构建环境:[$type]"
+    local default_build_type=$RELEASE
+
+    case "$build_type" in
+    "$RELEASE" | "$DEBUG" | "$PROFILE")
+        print_ok "构建环境:[$build_type]"
+        ;;
+    "")
+        print_warn "未设置构建环境,将使用默认值[$default_build_type]"
+        build_type=$default_build_type
         ;;
     *)
         print_error "请输入正确的构建环境"
-        echo $HELP_MESSAGE_PARAM_TYPE
+        echo $HELP_MESSAGE_PARAM_BUILD_TYPE
         exit 1
         ;;
     esac
@@ -69,12 +84,13 @@ check_platform() {
     default_platform_option=$APK
     default_android_target="android-arm64"
     default_ios_export="app-store"
-    platform_sub_option="--target-platform ${default_android_target}"
+    platform_sub_option=""
 
     case "${platform:-}" in
     "$ANDROID")
         platform_option=$APK
-        
+        print_ok "平台:[$platform]"
+
         # 校验Android target-platform参数
         if [ -n "${android_target:-}" ]; then
             case "$android_target" in
@@ -95,7 +111,7 @@ check_platform() {
         ;;
     "$IOS")
         platform_option=$IPA
-        
+        print_ok "平台:[$platform]"
         # 校验iOS export-method参数
         if [ -n "${ios_export_method:-}" ]; then
             case "$ios_export_method" in
@@ -116,9 +132,10 @@ check_platform() {
         ;;
     "")
         print_warn "未设置platform,将使用默认值[$default_platform]"
+        print_warn "忽略 -a 和 -e 参数,使用默认值[$default_android_target]"
         platform=$default_platform
         platform_option=$default_platform_option
-        android_target=$default_android_target
+        platform_sub_option="--target-platform ${default_android_target}"
         ;;
     *)
         print_error "请输入正确的platform"
@@ -174,10 +191,11 @@ build() {
     print_start "开始构建"
 
     # 构建基础命令
-    build_cmd="flutter clean && flutter build ${platform_option} --release --build-name=${version} --build-number=${build_number} ${platform_sub_option}"
+    build_cmd="flutter clean && flutter build ${platform_option} --${build_type} --build-name=${version} --build-number=${build_number} ${platform_sub_option}"
 
     print_ok "执行构建命令:"
-    echo "$build_cmd"
+    echo "[$build_cmd]"
+    echo ""
 
     # 执行构建命令
     eval $build_cmd
@@ -249,6 +267,7 @@ print_build_info() {
 # 主函数
 main() {
     # set -x
+    check_type
     check_platform
     check_build_option
     build
