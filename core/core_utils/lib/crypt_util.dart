@@ -6,6 +6,8 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:pointycastle/asymmetric/api.dart';
 
 abstract class CryptUtil {
+  CryptUtil._();
+
   /// aes加密
   static String aesEncode({required String content, required String key}) {
     final secretKey = encrypt.Key.fromUtf8(key);

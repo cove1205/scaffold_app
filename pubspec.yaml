@@ -1,6 +1,6 @@
 name: scaffold_app
 description: "脚手架应用模板"
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -16,13 +16,19 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   core_utils:
-    path: packages/core_utils
+    path: core/core_utils
 
   core_network:
-    path: packages/core_network
+    path: core/core_network
 
   shared_widget:
-    path: packages/shared_widget
+    path: shared/shared_widget
+
+  feature_auth:
+    path: features/feature_auth
+
+  feature_debug:
+    path: features/feature_debug
 
   get: ^4.7.2
   flutter_screenutil: ^5.9.3

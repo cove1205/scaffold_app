@@ -88,7 +88,7 @@ abstract class LogUtil {
     ),
   );
 
-  static Widget get debugScreen => TalkerScreen(talker: talker);
+  static Widget get talkerPage => TalkerScreen(talker: talker);
 
   static NavigatorObserver get navigatorObserver => TalkerRouteObserver(talker);
 }

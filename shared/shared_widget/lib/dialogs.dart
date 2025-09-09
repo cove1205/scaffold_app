@@ -44,7 +44,7 @@ class ConfirmDialog extends StatelessWidget {
                   child: CommonButton(
                     text: '取消',
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(false);
                     },
                     backgroundColor: Color(0xFF7C65F6).withAlpha(45),
                     textColor: Color(0xFF7C65F6),
@@ -56,7 +56,7 @@ class ConfirmDialog extends StatelessWidget {
                     text: '确认',
                     onPressed: () {
                       onConfirm?.call();
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(true);
                     },
                     backgroundColor: Color(0xFF7C65F6),
                     textColor: Colors.white,

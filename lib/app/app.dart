@@ -1,22 +1,21 @@
 import 'dart:async';
 
+import 'package:core_network/core_network.dart';
 import 'package:core_network/interceptors/loading_interceptor.dart';
 import 'package:core_network/interceptors/retry_interceptor.dart';
+import 'package:core_utils/connectivity_util.dart';
+import 'package:core_utils/info_util.dart';
 import 'package:core_utils/lifecycle_util.dart';
 import 'package:core_utils/loading_util.dart';
+import 'package:core_utils/log_util.dart';
+import 'package:core_utils/storage_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'package:core_network/core_network.dart';
-import 'package:core_utils/connectivity_util.dart';
-import 'package:core_utils/info_util.dart';
-import 'package:core_utils/log_util.dart';
-import 'package:core_utils/storage_util.dart';
-import 'package:scaffold_app/app/configs/app_constant.dart';
 import 'package:shared_widget/scaffold_app.dart';
 
+import 'configs/app_constant.dart';
 import 'configs/interceptors.dart';
 import 'configs/app_configs.dart';
 import 'app_routes.dart';

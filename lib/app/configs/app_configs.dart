@@ -2,7 +2,7 @@ import 'package:core_utils/loading_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_widget/refreshable.dart' show RefreshableList;
+import 'package:shared_widget/refreshable.dart';
 
 abstract class AppConfigs {
   /// 设计稿尺寸

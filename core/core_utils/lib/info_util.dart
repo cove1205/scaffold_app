@@ -64,6 +64,8 @@ class AppInfo {
 
 /// app信息工具类
 abstract class InfoUtil {
+  InfoUtil._();
+
   /// app信息
   static late final AppInfo appInfo;
 

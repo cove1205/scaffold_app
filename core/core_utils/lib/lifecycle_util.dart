@@ -45,6 +45,8 @@ enum AppLifecycle {
 /// });
 /// ```
 abstract class LifecycleUtil {
+  LifecycleUtil._();
+
   static StreamController<AppLifecycle>? _lifecycleNotifaction;
 
   /// 添加生命周期监听

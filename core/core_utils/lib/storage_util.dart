@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// 基于shared_preferences的存储工具类
 abstract class StorageUtil {
+  StorageUtil._();
+
   static SharedPreferences? _innerInstance;
 
   static SharedPreferences get _storageInstance => _innerInstance == null

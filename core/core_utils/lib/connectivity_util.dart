@@ -50,6 +50,8 @@ enum ConnectivityStatus {
 
 /// 网络状态工具类
 class ConnectivityUtil {
+  ConnectivityUtil._();
+
   static StreamController<ConnectivityStatus>? _connectivityController;
 
   static StreamController<ConnectivityStatus> get connectivityController =>
@@ -60,6 +62,10 @@ class ConnectivityUtil {
   }
 
   /// 监听网络状态
+  /// [onStatusChanged] 网络状态回调
+  ///
+  /// 生成一个用于监听网络状态的订阅器[StreamSubscription<ConnectivityStatus>]
+  /// 页面生命周期结束时，需要调用[subscription.cancel()]取消订阅
   static StreamSubscription<ConnectivityStatus> listenConnectivityChanged(
     StatusChangedCallback onStatusChanged,
   ) {
@@ -92,7 +98,9 @@ class ConnectivityUtil {
     return _statusFormConnectivityResult(connectivityResult);
   }
 
-  ///
+  /// 由于Connectivity在返回监听网络状态或是当前网络状态时，
+  /// 会返回多个网络状态[List<ConnectivityResult>]，
+  /// 所以需要根据判断逻辑转换为单个网络状态[ConnectivityStatus]
   static ConnectivityStatus _statusFormConnectivityResult(
     List<ConnectivityResult> connectivityResult,
   ) {

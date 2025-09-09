@@ -144,16 +144,19 @@ enum PermissionType {
 }
 
 extension PermissionTypeExtension on PermissionType {
-  // PermissionStatusType get status => PermissionUtil.checkPermission(this);
 
-  Future<PermissionStatusType> request() =>
-      PermissionUtil.requestPermission(this);
+  Future<PermissionStatusType> request() async =>
+      await PermissionUtil.requestPermission(this);
 
-  // ServiceStatusType get serviceStatus => PermissionUtil.checkServiceStatus(this);
+  Future<ServiceStatusType> serviceStatus() async =>
+      await PermissionUtil.checkServiceStatus(this);
+
 }
 
 /// 权限工具类
 abstract class PermissionUtil {
+  PermissionUtil._();
+
   /// 检查权限状态
   static Future<PermissionStatusType> checkPermission(
     PermissionType permissonType,
