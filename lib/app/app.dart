@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shared/shared_app_style.dart';
 import 'package:shared/shared_widget/scaffold_app.dart';
 
 import 'configs/app_constant.dart';
@@ -23,7 +24,7 @@ class App extends ScaffoldApp {
   @override
   FutureOr<Widget> buildApp() async {
     return ScreenUtilInit(
-      designSize: AppConfigs.designSize,
+      designSize: AppStyle.designSize,
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
@@ -32,7 +33,7 @@ class App extends ScaffoldApp {
         initialRoute: AppRoutes.initialRoute,
         unknownRoute: unknownRoute,
         getPages: appPages,
-        theme: AppConfigs.themeData,
+        theme: AppStyle.themeData,
         localizationsDelegates: AppConfigs.localizationsDelegates,
         supportedLocales: AppConfigs.supportedLocales,
         navigatorObservers: [LogUtil.navigatorObserver],
@@ -87,7 +88,7 @@ class App extends ScaffoldApp {
   @override
   Future<void> afterRun() async {
     ///设置Android头部的导航栏透明
-    SystemChrome.setSystemUIOverlayStyle(AppConfigs.systemUiOverlayStyle);
+    SystemChrome.setSystemUIOverlayStyle(AppStyle.systemUiOverlayStyle);
 
     return super.afterRun();
   }
