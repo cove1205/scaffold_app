@@ -54,7 +54,7 @@ class App extends ScaffoldApp {
       await StorageUtil.init();
       await InfoUtil.init();
       NetworkClient.init(
-        // baseUrl: AppConfig.apiBaseUrl,
+        baseUrl: AppConstant.baseUrl,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 30),

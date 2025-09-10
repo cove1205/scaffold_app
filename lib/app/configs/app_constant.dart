@@ -5,5 +5,5 @@
 abstract class AppConstant {
   static const String appName = 'scaffold_app';
 
-  static const String baseUrl = 'https://api.example.com';
+  static const String baseUrl = 'http://192.168.31.94:8000';
 }

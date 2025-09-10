@@ -9,7 +9,7 @@ class DebugRepository extends GetxService implements DebugInterface {
   @override
   Future<List<Item>> getItemList(int page, int pageSize) async {
     NetworkRequest req = NetworkRequest(
-      'http://192.168.31.94:8000/items1',
+      '/items',
       queryParams: {'page': page, 'page_size': pageSize},
     );
 
@@ -20,7 +20,7 @@ class DebugRepository extends GetxService implements DebugInterface {
 
   @override
   Future<Item> getItemDetail(int id) async {
-    NetworkRequest req = NetworkRequest('http://192.168.31.94:8000/items/$id');
+    NetworkRequest req = NetworkRequest('/items/$id');
     return await NetworkClient()
         .fetch(req, retry: true)
         .decodeData(decoder: Item.fromJson);
