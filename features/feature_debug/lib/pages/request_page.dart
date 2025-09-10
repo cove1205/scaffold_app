@@ -1,14 +1,16 @@
 import 'dart:io';
-
-import 'package:core_network/core_network.dart';
-import 'package:core_utils/loading_util.dart';
-import 'package:core_utils/log_util.dart';
-import 'package:core_utils/storage_util.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'dart:convert';
 
-import 'package:shared_widget/buttons.dart';
+import 'package:core/core_extensions/function_extension.dart';
+import 'package:core/core_network/core_network.dart';
+import 'package:core/core_utils/loading_util.dart';
+import 'package:core/core_utils/storage_util.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared/shared_services/interfaces/debug_interface.dart';
+import 'package:shared/shared_services/models/item.dart';
+import 'package:shared/shared_services/services/http_helper.dart';
+import 'package:shared/shared_widget/buttons.dart';
 
 class RequestBinding extends Bindings {
   @override
@@ -19,8 +21,8 @@ class RequestBinding extends Bindings {
 
 class RequestController extends GetxController {
   RequestController();
-
-  final resMap = <String, dynamic>{}.obs;
+  final _repo = Get.find<DebugInterface>();
+  final item = Rxn<Item>();
 
   /// 下载进度
   final downloadProgress = 0.0.obs;
@@ -32,45 +34,42 @@ class RequestController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    path = '${await StorageUtil.cacheDirectory}/1234.jpeg';
   }
 
   /// 下载文件
   Future<void> downloadFile() async {
     downloadProgress.value = 0;
     downloadRes.value = false;
+
+    String fileName = 'IMG_3597.jpeg';
+    path = '${await StorageUtil.cacheDirectory}/$fileName';
     DownloadRequest req = DownloadRequest(
-      'http://192.168.31.94:8000/download_pdf',
+      'http://192.168.31.94:8000/download_file',
       savePath: path,
+      queryParams: {'file_name': 'IMG_3597.jpeg'},
       onReceiveProgress: (received, total) {
         downloadProgress.value = received / total;
       },
     );
-    NetworkResponse res = await networkClient.download(req, retry: true);
-    if (res.exception != null) {
-      LoadingUtil.showError(res.exception!.message);
-    } else {
-      downloadRes.value = true;
-      LoadingUtil.showSuccess('下载成功');
-    }
+
+    await networkClient
+        .download(req, retry: true)
+        .tryCatch(
+          (l) => LoadingUtil.showError('下载失败: ${l.message}'),
+          (r) => downloadRes.value = true,
+        );
   }
 
   /// 请求
   Future<void> request() async {
-    NetworkRequest req = NetworkRequest(
-      // 'https://jsonplaceholder.typicode.com1/todos/12',
-      'http://192.168.31.94:8000/items/222',
-      queryParams: {'q': '222dsdasdadsa'},
-    );
-
-    NetworkResponse res = await networkClient.fetch(req, retry: true);
-
-    if (res.exception != null) {
-      LoadingUtil.showError(res.exception!.message);
-    } else {
-      resMap.value = res.data;
-      LogUtil.info('请求结果: ${res.data}');
-    }
+    await _repo
+        .getItemDetail(222)
+        .withMinSeconds(1)
+        .withLoading()
+        .tryCatch(
+          (l) => LoadingUtil.showError('请求失败: ${l.message}'),
+          (r) => item.value = r,
+        );
   }
 
   /// 上传文件
@@ -79,17 +78,16 @@ class RequestController extends GetxController {
       'http://192.168.31.94:8000/upload_file',
       filePaths: [path],
       onSendProgress: (received, total) {
-        // LoadingUtil.showProgress(received / total);
+        LoadingUtil.showProgress(received / total);
         debugPrint('上传进度: $received / $total');
       },
     );
 
-    NetworkResponse res = await networkClient.upload(req, retry: true);
-    if (res.exception != null) {
-      LoadingUtil.showError(res.exception!.message);
-    } else {
-      LoadingUtil.showSuccess('上传成功');
-    }
+    await networkClient
+      ..upload(req, retry: true).tryCatch(
+        (l) => LoadingUtil.showError('上传失败: ${l.message}'),
+        (r) => LoadingUtil.showSuccess('上传成功'),
+      );
   }
 }
 
@@ -112,16 +110,13 @@ class RequestPage extends GetView<RequestController> {
               Text('get请求结果'),
               Obx(() {
                 return Text(
-                  const JsonEncoder.withIndent('  ').convert(controller.resMap),
+                  const JsonEncoder.withIndent(
+                    '  ',
+                  ).convert(controller.item.value?.name),
                 );
               }),
               SizedBox(height: 20),
-              CommonButton(
-                text: 'get请求',
-                onPressed: () async {
-                  await controller.request();
-                },
-              ),
+              CommonButton(text: 'get请求', onPressed: controller.request),
               SizedBox(height: 40),
 
               Obx(() {

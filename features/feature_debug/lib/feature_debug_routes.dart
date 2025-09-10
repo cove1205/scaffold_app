@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
-import 'package:shared_widget/qr_scan_widget.dart';
+import 'package:shared/shared_widget/qr_scan_widget.dart';
 
 import 'pages/debug_index_page.dart';
 import 'pages/info_page.dart';
 import 'pages/log_page.dart';
 import 'pages/permission_page.dart';
+import 'pages/refresh_list_page.dart';
 import 'pages/request_page.dart';
 
 final debugPages = <GetPage<dynamic>>[
@@ -42,6 +43,13 @@ final debugPages = <GetPage<dynamic>>[
         name: '/qr_scan',
         page: () => const QRScanWidget(),
         transition: Transition.rightToLeft,
+      ),
+      GetPage(
+        title: '下拉列表',
+        name: '/refresh_list',
+        page: () => const RefreshListPage(),
+        transition: Transition.rightToLeft,
+        binding: RefreshListBinding(),
       ),
     ],
   ),

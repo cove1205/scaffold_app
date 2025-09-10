@@ -1,4 +1,4 @@
-import 'package:core_utils/info_util.dart';
+import 'package:core/core_utils/info_util.dart';
 import 'package:flutter/material.dart';
 
 class InfoPage extends StatelessWidget {

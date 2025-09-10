@@ -2,8 +2,8 @@ import 'package:feature_debug/pages/debug_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:shared_widget/dialogs.dart';
-import 'package:shared_widget/bottom_nav_widget.dart';
+import 'package:shared/shared_widget/dialogs.dart';
+import 'package:shared/shared_widget/bottom_nav_widget.dart';
 
 class RootBinding extends Bindings {
   @override

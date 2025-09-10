@@ -1,24 +1,23 @@
 import 'dart:async';
 
-import 'package:core_network/core_network.dart';
-import 'package:core_network/interceptors/loading_interceptor.dart';
-import 'package:core_network/interceptors/retry_interceptor.dart';
-import 'package:core_utils/connectivity_util.dart';
-import 'package:core_utils/info_util.dart';
-import 'package:core_utils/lifecycle_util.dart';
-import 'package:core_utils/loading_util.dart';
-import 'package:core_utils/log_util.dart';
-import 'package:core_utils/storage_util.dart';
+import 'package:core/core_network/core_network.dart';
+import 'package:core/core_network/interceptors/retry_interceptor.dart';
+import 'package:core/core_utils/connectivity_util.dart';
+import 'package:core/core_utils/info_util.dart';
+import 'package:core/core_utils/lifecycle_util.dart';
+import 'package:core/core_utils/log_util.dart';
+import 'package:core/core_utils/storage_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:shared_widget/scaffold_app.dart';
+import 'package:shared/shared_widget/scaffold_app.dart';
 
 import 'configs/app_constant.dart';
-import 'configs/interceptors.dart';
+import 'configs/app_interceptors.dart';
 import 'configs/app_configs.dart';
-import 'app_routes.dart';
+import 'configs/app_routes.dart';
+import 'configs/app_services.dart';
 
 class App extends ScaffoldApp {
   @override
@@ -47,10 +46,12 @@ class App extends ScaffoldApp {
     LogUtil.info('>>>>>Init Services Start<<<<<');
 
     try {
+      /// init Services
+      AppServices.initServices();
+
       /// init Utils
       await StorageUtil.init();
       await InfoUtil.init();
-
       NetworkClient.init(
         // baseUrl: AppConfig.apiBaseUrl,
         connectTimeout: const Duration(seconds: 30),
@@ -61,14 +62,6 @@ class App extends ScaffoldApp {
           'Accept': 'application/json',
         },
         interceptors: [
-          LoadingInterceptor(
-            onShowLoading: () {
-              LoadingUtil.show();
-            },
-            onHideLoading: () {
-              LoadingUtil.dismiss();
-            },
-          ),
           RetryInterceptor(dio: NetworkClient.dio, logPrint: LogUtil.warning),
           ResInterceptor(),
           LogUtil.talkerDioLogger,

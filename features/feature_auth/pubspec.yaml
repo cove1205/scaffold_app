@@ -13,14 +13,11 @@ dependencies:
 
   get: ^4.7.2
 
-  core_utils:
-    path: ../../core/core_utils
+  core:
+    path: ../../core
 
-  core_network:
-    path: ../../core/core_network
-
-  shared_widget:
-    path: ../../shared/shared_widget
+  shared:
+    path: ../../shared
 
 dev_dependencies:
   flutter_lints: ^6.0.0

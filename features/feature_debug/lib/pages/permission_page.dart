@@ -1,4 +1,4 @@
-import 'package:core_utils/permission_util.dart';
+import 'package:core/core_utils/permission_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
