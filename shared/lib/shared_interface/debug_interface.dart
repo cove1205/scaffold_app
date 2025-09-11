@@ -1,4 +1,4 @@
-import '../models/item.dart';
+import '../shared_models/item.dart';
 
 abstract interface class DebugInterface {
   /// 获取列表数据

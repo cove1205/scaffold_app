@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:core/core_extensions/function_extension.dart';
 import 'package:core/core_network/core_network.dart';
 import 'package:core/core_utils/loading_util.dart';
 import 'package:core/core_utils/storage_util.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:shared/shared_services/interfaces/debug_interface.dart';
-import 'package:shared/shared_services/models/item.dart';
-import 'package:shared/shared_services/services/http_helper.dart';
+import 'package:shared/shared_interface/debug_interface.dart';
+import 'package:shared/shared_models/item.dart';
+import 'package:shared/shared_services/http_helper.dart';
 import 'package:shared/shared_widget/buttons.dart';
 
 class RequestBinding extends Bindings {
@@ -64,9 +64,8 @@ class RequestController extends GetxController {
   Future<void> request() async {
     await _repo
         .getItemDetail(222)
-        .withMinSeconds(1)
         .withLoading()
-        .tryCatch(
+        .tryCatchClean(
           (l) => LoadingUtil.showError('请求失败: ${l.message}'),
           (r) => item.value = r,
         );

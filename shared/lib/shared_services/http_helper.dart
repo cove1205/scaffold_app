@@ -14,6 +14,22 @@ extension FuturetryCatch on Future<dynamic> {
       return error;
     }).run()).fold((l) => onError(l), (r) => onSuccess(r));
   }
+
+  Future<void> tryCatchClean(
+    Function(NetworkException error) onError,
+    Function(dynamic) onSuccess,
+  ) async {
+    try {
+      final result = await this;
+      onSuccess(result);
+    } catch (e) {
+      if (e is NetworkException) {
+        onError(e);
+      } else {
+        onError(NetworkException.fromError(e as Error));
+      }
+    }
+  }
 }
 
 extension DecodeData on Future<NetworkResponse> {

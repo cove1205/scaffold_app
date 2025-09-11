@@ -1,8 +1,8 @@
 import 'package:core/core_extensions/function_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared/shared_services/interfaces/debug_interface.dart';
-import 'package:shared/shared_services/models/item.dart';
+import 'package:shared/shared_interface/debug_interface.dart';
+import 'package:shared/shared_models/item.dart';
 import 'package:shared/shared_widget/refreshable_paging_widget.dart';
 
 class RefreshListBinding extends Bindings {
