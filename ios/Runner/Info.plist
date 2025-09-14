@@ -38,5 +38,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photo library to compress videos</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs access to save compressed videos to photo library</string>
 </dict>
 </plist>

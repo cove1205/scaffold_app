@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:core/core_extensions/function_extension.dart';
 import 'package:core/core_network/core_network.dart';
 import 'package:core/core_utils/loading_util.dart';
 import 'package:core/core_utils/storage_util.dart';
