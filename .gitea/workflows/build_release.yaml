@@ -1,0 +1,22 @@
+name: build release
+run-name: ${{ gitea.actor }} build the release app 🚀
+on: [push]
+# defaults:
+#   run:
+#     shell: zsh
+
+jobs:
+  BUild Ios App:
+    runs-on: macos-arm64
+    steps:
+      - name: 拉取项目代码
+        uses: actions/checkout@v4
+      - run: echo "💡 开始构建应用"
+      - name: 构建应用
+        run: ./scripts/build.sh -p android -t release -v 1.0.0 -b 1
+      - run: echo "💡 构建应用成功"
+
+      - name: 移动构建结果到指定目录
+        run: mv ${{ gitea.workspace }}${{ vars.ANDROID_APK_PATH}} ~/Desktop/
+
+      - run: echo "🍏  Job 执行结果 ${{ job.status }}."
