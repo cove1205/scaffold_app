@@ -15,7 +15,6 @@ import 'package:shared/shared_app_style.dart';
 import 'package:shared/shared_widget/scaffold_app.dart';
 
 import 'configs/app_constant.dart';
-import 'configs/app_interceptors.dart';
 import 'configs/app_configs.dart';
 import 'configs/app_routes.dart';
 import 'configs/app_services.dart';
@@ -64,7 +63,6 @@ class App extends ScaffoldApp {
         },
         interceptors: [
           RetryInterceptor(dio: NetworkClient.dio, logPrint: LogUtil.warning),
-          ResInterceptor(),
           LogUtil.talkerDioLogger,
         ],
       );
