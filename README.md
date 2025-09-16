@@ -1,3 +1,5 @@
+![example workflow](https://git.happyeyez.com/cove/scaffold_app/actions/workflows/build_release.yaml/badge.svg)
+
 # Scaffold App
 
 一个基于 Flutter 的脚手架应用模板，采用模块化架构设计，提供完整的项目基础框架。
