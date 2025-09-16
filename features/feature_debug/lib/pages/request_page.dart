@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:core/core_extensions/function_extension.dart';
+import 'package:core/core_utils/log_util.dart';
 import 'package:get/get.dart';
 import 'package:core/core_network/core_network.dart';
 import 'package:core/core_utils/loading_util.dart';
@@ -66,7 +68,7 @@ class RequestController extends GetxController {
         .withLoading()
         .tryCatchClean(
           (l) => LoadingUtil.showError('请求失败: ${l.message}'),
-          (r) => item.value = r,
+          (r) => {LogUtil.info('请求成功: ${r.name}'), item.value = r},
         );
   }
 
@@ -114,7 +116,10 @@ class RequestPage extends GetView<RequestController> {
                 );
               }),
               SizedBox(height: 20),
-              CommonButton(text: 'get请求', onPressed: controller.request),
+              CommonButton(
+                text: 'get请求',
+                onPressed: controller.request.throttle(),
+              ),
               SizedBox(height: 40),
 
               Obx(() {

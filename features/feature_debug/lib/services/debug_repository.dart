@@ -1,4 +1,3 @@
-import 'package:core/core_extensions/function_extension.dart';
 import 'package:get/get.dart';
 
 import 'package:core/core_network/core_network.dart';
@@ -16,8 +15,7 @@ class DebugRepository extends GetxService implements DebugInterface {
 
     return await NetworkClient()
         .fetch(req, retry: true)
-        .decodeData(listDecoder: Item.fromJson)
-        .withMinSeconds(2);
+        .decodeData(listDecoder: Item.fromJson);
   }
 
   @override
@@ -28,7 +26,6 @@ class DebugRepository extends GetxService implements DebugInterface {
     );
     return await NetworkClient()
         .fetch(req, retry: true)
-        .decodeData(decoder: Item.fromJson)
-        .withMinSeconds(2);
+        .decodeData(decoder: Item.fromJson);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:core/core_network/core_network.dart';
 import 'package:core/core_utils/log_util.dart';
 import 'package:fpdart/fpdart.dart';
+import 'dart:async'; // Added for Completer
 
 final networkClient = NetworkClient();
 
@@ -37,7 +38,12 @@ extension DecodeData on Future<NetworkResponse> {
     Decoder<T>? decoder,
     Decoder<T>? listDecoder,
   }) async {
-    final data = (await this).data;
+    final ResponseData = (await this).data;
+
+    final data = ResponseData is Map && ResponseData['data'] != null
+        ? ResponseData['data']
+        : ResponseData;
+
     return (decoder != null && data is Map)
         ? (data)._decode<T>(decoder)
         : (listDecoder != null && data is List)
