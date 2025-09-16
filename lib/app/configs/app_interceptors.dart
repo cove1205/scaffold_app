@@ -3,73 +3,73 @@ import 'package:core/core_network/status_codes.dart';
 import 'package:core/core_utils/log_util.dart';
 import 'package:core/core_utils/storage_util.dart';
 
-/// 请求结果拦截器
-class ResInterceptor extends Interceptor {
-  ResInterceptor();
+// /// 请求结果拦截器
+// class ResInterceptor extends Interceptor {
+//   ResInterceptor();
 
-  @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    Response res = Response(
-      requestOptions: response.requestOptions,
-      statusMessage: response.statusMessage,
-      statusCode: response.statusCode,
-      data: response.data is Map && response.data['data'] != null
-          ? response.data['data']
-          : response.data,
-    );
+//   @override
+//   void onResponse(Response response, ResponseInterceptorHandler handler) {
+//     Response res = Response(
+//       requestOptions: response.requestOptions,
+//       statusMessage: response.statusMessage,
+//       statusCode: response.statusCode,
+//       data: response.data is Map && response.data['data'] != null
+//           ? response.data['data']
+//           : response.data,
+//     );
 
-    if (res.statusCode == status200OK) {
-      handler.next(res);
-    } else {
-      DioException error = DioException(
-        requestOptions: response.requestOptions,
-        response: response,
-        type: DioExceptionType.badResponse,
-      );
-      handler.reject(error, true);
-    }
-  }
+//     if (res.statusCode == status200OK) {
+//       handler.next(res);
+//     } else {
+//       DioException error = DioException(
+//         requestOptions: response.requestOptions,
+//         response: response,
+//         type: DioExceptionType.badResponse,
+//       );
+//       handler.reject(error, true);
+//     }
+//   }
 
-  @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async {
-    // String? errMsg;
+// @override
+// void onError(DioException err, ErrorInterceptorHandler handler) async {
+// String? errMsg;
 
-    // switch (err.type) {
-    //   case DioExceptionType.cancel:
-    //     break;
-    //   case DioExceptionType.connectionTimeout:
-    //     errMsg = "链接超时，请检查网络！";
-    //     break;
-    //   case DioExceptionType.connectionError:
-    //     errMsg = '链接错误，请重试！';
-    //     break;
-    //   case DioExceptionType.receiveTimeout:
-    //     errMsg = '响应超时，请稍等片刻重试！';
-    //     break;
-    //   case DioExceptionType.sendTimeout:
-    //     errMsg = '发送超时，请重试！';
-    //     break;
-    //   case DioExceptionType.badResponse:
-    //     errMsg = '发生未知错误，请联系管理员';
-    //     break;
-    //   case DioExceptionType.badCertificate:
-    //     errMsg = '发生未知错误，请联系管理员';
-    //     break;
-    //   case DioExceptionType.unknown:
-    //     errMsg = '未知错误，请检查网络连接';
-    //     break;
-    // }
+// switch (err.type) {
+//   case DioExceptionType.cancel:
+//     break;
+//   case DioExceptionType.connectionTimeout:
+//     errMsg = "链接超时，请检查网络！";
+//     break;
+//   case DioExceptionType.connectionError:
+//     errMsg = '链接错误，请重试！';
+//     break;
+//   case DioExceptionType.receiveTimeout:
+//     errMsg = '响应超时，请稍等片刻重试！';
+//     break;
+//   case DioExceptionType.sendTimeout:
+//     errMsg = '发送超时，请重试！';
+//     break;
+//   case DioExceptionType.badResponse:
+//     errMsg = '发生未知错误，请联系管理员';
+//     break;
+//   case DioExceptionType.badCertificate:
+//     errMsg = '发生未知错误，请联系管理员';
+//     break;
+//   case DioExceptionType.unknown:
+//     errMsg = '未知错误，请检查网络连接';
+//     break;
+// }
 
-    // String logMsg =
-    //     "URL--->${err.requestOptions.uri} -- $errMsg ${err.message} ";
+// String logMsg =
+//     "URL--->${err.requestOptions.uri} -- $errMsg ${err.message} ";
 
-    // if (errMsg != null) {
-    //   LogUtil.error(logMsg);
-    //   // ToastManager.show(errMsg);
-    // }
-    super.onError(err, handler);
-  }
-}
+// if (errMsg != null) {
+//   LogUtil.error(logMsg);
+//   // ToastManager.show(errMsg);
+// }
+// super.onError(err, handler);
+// }
+// }
 
 /// token拦截器
 /// 负责处理accessToken的装载和刷新
@@ -138,7 +138,7 @@ class TokenRefreshInterceptor extends Interceptor {
 
         // 调用刷新token接口（带重试机制）
         LogUtil.info('开始刷新token...');
-        final tokenData = await _refreshTokenWithRetry(refreshToken);
+        final tokenData = {};
         LogUtil.info('刷新token结果: $tokenData');
 
         if (tokenData.isNotEmpty && tokenData['accessToken'] != null) {
@@ -191,13 +191,6 @@ class TokenRefreshInterceptor extends Interceptor {
       // 非401响应，直接通过
       handler.next(response);
     }
-  }
-
-  /// 刷新token方法
-  Future<Map<String, dynamic>> _refreshTokenWithRetry(
-    String refreshToken,
-  ) async {
-    return {};
   }
 
   /// 处理需要重新登录的情况

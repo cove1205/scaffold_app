@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:shared/shared_widget/qr_scan_widget.dart';
 
 import 'pages/debug_index_page.dart';
 import 'pages/info_page.dart';
@@ -38,12 +37,12 @@ final debugPages = <GetPage<dynamic>>[
         page: () => const PermissionPage(),
         transition: Transition.rightToLeft,
       ),
-      GetPage(
-        title: '二维码扫描',
-        name: '/qr_scan',
-        page: () => const QRScanWidget(),
-        transition: Transition.rightToLeft,
-      ),
+      // GetPage(
+      //   title: '二维码扫描',
+      //   name: '/qr_scan',
+      //   page: () => const Container(),
+      //   transition: Transition.rightToLeft,
+      // ),
       GetPage(
         title: '下拉列表',
         name: '/refresh_list',
