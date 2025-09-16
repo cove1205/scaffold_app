@@ -77,7 +77,7 @@ class NetworkClient {
     bool retry = false,
   }) async {
     try {
-      Response response = await _dio.request(
+      Response response = await dio.request(
         req.apiPath,
         data: req.data,
         queryParameters: req.queryParams,
@@ -105,7 +105,7 @@ class NetworkClient {
     bool retry = false,
   }) async {
     try {
-      Response response = await _dio.download(
+      Response response = await dio.download(
         req.apiPath,
         req.savePath,
         data: req.data,
@@ -123,26 +123,24 @@ class NetworkClient {
     }
   }
 
-  /// 重试请求
-  Future<Response<T>> retry<T>(RequestOptions requestOptions) async {
-    Response<T> response = await _dio.request(
-      requestOptions.path,
-      data: requestOptions.data is FormData
-          ? (requestOptions.data as FormData).clone()
-          : requestOptions.data,
-      queryParameters: Map<String, dynamic>.from(
-        requestOptions.queryParameters,
-      ),
-      cancelToken: requestOptions.cancelToken,
-      options: Options(
-        method: requestOptions.method,
-        headers: requestOptions.headers,
-        extra: Map<String, dynamic>.from(requestOptions.extra),
-      ),
-      onSendProgress: requestOptions.onSendProgress,
-      onReceiveProgress: requestOptions.onReceiveProgress,
-    );
+  /// 使用无配置的dio发送请求
+  Future<NetworkResponse> fetchWithCleanDio<T>(NetworkRequest req) async {
+    try {
+      Response response = await dio.request(
+        req.apiPath,
+        data: req.data,
+        queryParameters: req.queryParams,
+        cancelToken: req.cancelToken,
+        options: req.optiopns,
+        onSendProgress: req.onSendProgress,
+        onReceiveProgress: req.onReceiveProgress,
+      );
 
-    return response;
+      return NetworkResponse.fromResponse(response);
+    } on DioException catch (e) {
+      throw NetworkException.fromDioException(e);
+    } on Error catch (e) {
+      throw NetworkException.fromError(e);
+    }
   }
 }

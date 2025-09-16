@@ -12,14 +12,15 @@ class NetworkResponse {
   dynamic data;
 
   /// 请求是否成功
-  bool get success => code == status200OK;
+  bool get success =>
+      {status200OK, status201Created, status204NoContent}.contains(code);
 
   NetworkResponse(this.code, this.msg, {this.data});
 
   factory NetworkResponse.fromResponse(Response response) {
     return NetworkResponse(
-      response.statusCode ?? status200OK,
-      response.statusMessage ?? 'OK',
+      response.statusCode ?? -1,
+      response.statusMessage ?? 'Unknown',
       data: response.data,
     );
   }
