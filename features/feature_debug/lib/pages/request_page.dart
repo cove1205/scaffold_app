@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:core/core_extensions/function_extension.dart';
 import 'package:core/core_utils/log_util.dart';
 import 'package:get/get.dart';
 import 'package:core/core_network/core_network.dart';
@@ -116,10 +115,7 @@ class RequestPage extends GetView<RequestController> {
                 );
               }),
               SizedBox(height: 20),
-              CommonButton(
-                text: 'get请求',
-                onPressed: controller.request.throttle(),
-              ),
+              CommonButton(text: 'get请求', onPressed: controller.request),
               SizedBox(height: 40),
 
               Obx(() {

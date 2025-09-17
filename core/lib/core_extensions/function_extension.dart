@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+/// 函数节流扩展
 extension FunctionExt on Function {
   VoidCallback throttle() => _FunctionProxy(this).throttle;
 
@@ -75,22 +76,23 @@ class _FunctionProxy {
   }
 }
 
-extension FutureMinDuration on Future {
+/// Future 最小持续时间扩展
+
+extension FutureMinDuration<T> on Future<T> {
   /// 确保 Future 至少执行指定时间
-  Future withMinDuration(Duration minDuration) async {
-    /// 确保至少minDuration的执行时间
-    List result = await Future.wait([
+  Future<T> withMinDuration<T>(Duration minDuration) async {
+    final results = await Future.wait([
       this,
-      Future.delayed(minDuration), // 最小时间保证
+      Future<void>.delayed(minDuration),
     ]);
-    return result.first;
+    return results.first as T;
   }
 
   /// 确保 Future 至少执行指定秒数
-  Future withMinSeconds(int seconds) =>
-      withMinDuration(Duration(seconds: seconds));
+  Future<T> withMinSeconds<T>(int seconds) =>
+      withMinDuration<T>(Duration(seconds: seconds));
 
   /// 确保 Future 至少执行指定毫秒数
-  Future withMinMilliseconds(int milliseconds) =>
-      withMinDuration(Duration(milliseconds: milliseconds));
+  Future<T> withMinMilliseconds<T>(int milliseconds) =>
+      withMinDuration<T>(Duration(milliseconds: milliseconds));
 }

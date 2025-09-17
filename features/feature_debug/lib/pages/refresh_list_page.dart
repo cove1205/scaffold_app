@@ -33,9 +33,17 @@ class RefreshListPage extends GetView<RefreshListController> {
     return Scaffold(
       appBar: AppBar(title: Text('下拉列表')),
       body: RefreshablePagingList(
+        refreshOnStart: true,
         dataRequest: controller.getItemList,
         itemBuilder: (context, item, index) {
-          return Text(item.name);
+          return Container(
+            margin: EdgeInsets.all(10),
+            color: Colors.blue.withAlpha(125),
+            child: ListTile(
+              title: Text(item.name),
+              subtitle: Text(item.id.toString()),
+            ),
+          );
         },
       ),
     );

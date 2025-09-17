@@ -1,3 +1,4 @@
+import 'package:core/core_extensions/function_extension.dart';
 import 'package:flutter/material.dart';
 
 /// 通用按钮
@@ -68,7 +69,8 @@ class CommonButton extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
       ),
-      onPressed: onPressed,
+      // onPressed: onPressed?.throttle(),
+      onPressed: onPressed?.throttle(),
       iconAlignment: iconAlignment ?? IconAlignment.start,
       style: ButtonStyle().copyWith(
         padding: WidgetStateProperty.all(
